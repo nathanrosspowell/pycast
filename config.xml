@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<podcast>
+    <!-- Root folder to download to. -->
+    <folder value="~/Podcasts" />
+    <cache value="~/Podcasts/cache" />
+    <!-- RSS feeds to download, listed highest priority to lowest. 
+        Fields to set:
+            name= print out name of the feed 
+            folder= sub folder used
+            rss= RSS URI
+        Optional Fields:
+            seperator= '-'
+            space= '_'
+            dateFormat= how the datetime will be displayed
+            nameFormat= tuple for custom file name format: %s+seperator+%s
+                        can use title (string) and dateFormat (string)
+                        e.g "JRE+title, dateFormat
+    -->
+    <feeds>
+        <feed name="Lavender Hour" 
+              folder="Lavender Hour" 
+              rss="http://lavenderhour.libsyn.com/rss"
+              nameFormat="dateFormat, title"
+              dateFormat="%Y-%m-%d"
+              startdate="2012/06/01"
+        />
+		<feed name="Joe Rogan Experience" 
+              folder="JRE" 
+              rss="http://joeroganexp.joerogan.libsynpro.com/irss"
+              nameFormat="title[ title.find('#')+1: ], dateFormat"
+              startdate="2012/07/014"
+        />
+    </feeds>
+</podcast>
