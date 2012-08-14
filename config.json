@@ -1,6 +1,6 @@
 {
-    "folder" : "home_folder",
-    "cache" : "home_folder/cache",
+    "folder" : "testfolder",
+    "cache" : "testfolder/cache",
     "feeds" :{ 
         "Lavender Hour" : {
             "folder" : "Lavender Hour", 

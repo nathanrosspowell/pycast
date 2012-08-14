@@ -21,7 +21,7 @@ class Settings:
     # Data get function.
     def getFromXml( self, configFile ):
         # Get the xml document.
-        doc = xml.dom.minidom.parse(configFile  )
+        doc = xml.dom.minidom.parse( configFile  )
         # Set up the inital data structure for settings.
         settings = { "feeds": {} }
         # Iterate from the root node.

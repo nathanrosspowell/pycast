@@ -29,3 +29,6 @@ pip-log.txt
 # Stupid files.
 *~
 *.swp
+
+# Test folder
+/testfolder/*

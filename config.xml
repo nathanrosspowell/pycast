@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <podcast>
     <!-- Root folder to download to. -->
-    <folder value="~/Podcasts" />
-    <cache value="~/Podcasts/cache" />
+    <folder value="testfolder" />
+    <cache value="testfolder/cache" />
     <!-- RSS feeds to download, listed highest priority to lowest. 
         Fields to set:
             name= print out name of the feed 
