@@ -1,0 +1,19 @@
+{
+    "folder" : "home_folder",
+    "cache" : "home_folder/cache",
+    "feeds" :{ 
+        "Lavender Hour" : {
+            "folder" : "Lavender Hour", 
+            "rss" : "http://lavenderhour.libsyn.com/rss",
+            "nameFormat" : "dateFormat, title",
+            "dateFormat" : "%Y-%m-%d",
+            "startdate" : "2012/06/01"
+        },
+        "Joe Rogan Experience" : {
+              "folder" : "JRE",
+              "rss" : "http://joeroganexp.joerogan.libsynpro.com/irss",
+              "nameFormat" : "title[ title.find('#')+1: ], dateFormat",
+              "startdate" : "2012/07/014"
+        }
+    }
+}
