@@ -15,10 +15,10 @@ class FeedGrabber:
     def __init__( self, setting ):
         self.feeds = setting.data[ "feeds" ] 
         self.setting = setting
-        self.feedXmls ={} 
+        self.xmls ={} 
         # Make a dict of feed names -> xml
         for name, data in self.feeds.items():
-            self.feedXmls[ name ] = self.feedOpener( setting, name, data )
+            self.xmls[ name ] = self.feedOpener( setting, name, data )
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Open and save a file to disk.
@@ -47,4 +47,4 @@ if __name__ == "__main__":
     settings = Settings( "config.json" )
     feedGraber = FeedGrabber( settings )
     print feedGraber.feeds
-    print feedGraber.feedXmls
+    print feedGraber.xmls

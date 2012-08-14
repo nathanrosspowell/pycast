@@ -66,11 +66,9 @@ def feedOpener( settings, rss ):
     opener = urllib.FancyURLopener({})
     if not os.path.exists( settings[ "cache" ] ):
         os.mkdir( settings[ "cache" ] )
-    print "FEEED", rss
     name = os.path.join( settings[ "cache" ], slugify( rss ) )
     opener.retrieve( rss, name )
     with open( name, 'r' ) as rssXml:
-        print "!!!!!", rssXml
         return xml.dom.minidom.parse( rssXml )
     return None
 
