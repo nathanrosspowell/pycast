@@ -1,5 +1,7 @@
 #!/usr/bin/python
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# PyCast. Authored by Nathan Ross Powell.
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Imports.
 import xml.dom.minidom
 import urllib
@@ -11,6 +13,7 @@ import utils
 # Get feed files from the net and save them off with a better name.
 class Grabber:
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Construct with the settings.
     def __init__( self, setting ):
         self.feeds = setting.data[ "feeds" ]
         self.setting = setting
@@ -18,10 +21,15 @@ class Grabber:
         self.fileNames = {}
         # Make a dict of names -> xml
         self.xmls = {}
+        self.reset()
+
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Main setting function. 
+    def reset( self ):
         for name, data in self.feeds.items():
             fileName = self.feedNamer( name )
             self.fileNames[ name ] = fileName
-            path = self.feedOpener( setting, fileName, data )
+            path = self.feedOpener( self.setting, fileName, data )
             self.xmls[ name ] = self.feedReader( path )
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,9 +63,12 @@ class Grabber:
     # Open and save a file to disk.
     def feedReader( self, path ):
         # Once it's saved, we can then open it and get the data.
-        with open( path, 'r' ) as rssXml:
-            # Return the xml doc.
-            return  xml.dom.minidom.parse( rssXml )
+        try:
+            with open( path, 'r' ) as rssXml:
+                # Return the xml doc.
+                return  xml.dom.minidom.parse( rssXml )
+        except:
+            pass
         return None
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

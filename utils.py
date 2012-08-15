@@ -1,5 +1,7 @@
 #!/usr/bin/python
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# PyCast. Authored by Nathan Ross Powell.
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Imports.
 import re
 import json
@@ -48,3 +50,11 @@ def xmlGenNodes( node, name ):
 def xmlGetAttrib( node, name ):
     return node.attributes[ name ].firstChild.wholeText
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Test if a file exists/can be read.
+def fileExists( filePath ):
+    try:
+        with open( filePath, 'r' ) as file:
+            return True
+    except:
+        return False
