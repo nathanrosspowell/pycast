@@ -8,24 +8,26 @@ import utils
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Turn the xml file into usable data.
-class FeedScraper:
+class Scraper:
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __init__( self, setting, xmls ):
         self.xmls = xmls
+        self.items = {}
         self.data = {}
         for name, xml in self.xmls.iteritems():
-            self.data[ name ] = []
+            self.items[ name ] = []
             feedDict = setting.data[ "feeds" ][ name ]
-            for data in self.feedSanitise( setting, xml, feedDict ):
-                self.data[ name ].append( data )
+            feedData = self.addExtraData( feedDict )
+            self.data[ name ] = feedData
+            for data in self.feedSanitise( feedData, xml, feedDict ):
+                self.items[ name ].append( data )
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Turn the xml into an easy to use python object.
-    def feedSanitise( self, settings, xml, feedDict ):
+    def feedSanitise( self, feedData, xml, feedDict ):
         for itemNode in self.genItems( xml ):
             data = self.itemDict( itemNode )
-            if self.gotAllData( data ):
-                self.addExtraData( data, feedDict )
+            if self.gotAllData( feedData, data ):
                 yield data
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -51,21 +53,23 @@ class FeedScraper:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #  Check the esential data is there.
-    def gotAllData( self, data ):
+    def gotAllData( self, feedData, data ):
         for key in ( "title", "url", "date" ):
             if not data.has_key( key ):
                 return False
+        data[ "fileName" ] = self.getFileName( feedData, data )
         return True
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Add in extra data with defaults if they're not set up for the feed.
-    def addExtraData( self, data, feedDict ):
+    def addExtraData( self, feedDict ):
+        data = {}
         data[ "nameFormat" ] = feedDict.get( "nameFormat", "( title, dateFormat )" )
         data[ "dateFormat" ] = feedDict.get( "dateFormat", "%Y-%m-%d_%H-%M-%S" )
         data[ "seperator" ] = feedDict.get( "seperator", "-" )
         data[ "space" ] = feedDict.get( "space", "_" )
         data[ "startDate" ] = feedDict.get( "startDate", None )
-        data[ "fileName" ] = self.getFileName( data )
+        return data
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Generator of all the nodes for 'items' e.g. each podcast.
@@ -81,11 +85,11 @@ class FeedScraper:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Generator of all the nodes for 'items' e.g. each podcast.
-    def getFileName( self, data ):    
-        dateFormat = data[ "date" ].strftime( data[ "dateFormat" ] )
+    def getFileName( self, feedData, data ):
+        dateFormat = data[ "date" ].strftime( feedData[ "dateFormat" ] )
         title = data[ "title" ].title()
-        nameFormat = eval( "(%s)" % ( data[ "nameFormat" ], ) )
-        seperator = data[ "seperator" ]
+        nameFormat = eval( "(%s)" % ( feedData[ "nameFormat" ], ) )
+        seperator = feedData[ "seperator" ]
         name =  '%s%s%s' % ( nameFormat[ 0 ], seperator, nameFormat[ 1 ] )
         url = data[ "url" ]
         fileExtension = url[ url.rfind("."):]
@@ -99,13 +103,16 @@ class FeedScraper:
 if __name__ == "__main__":
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Imports needed for test.
-    from settingsJson import Settings
-    from feedGrabber import FeedGrabber
+    from settingsJson import Settings, Config
+    from grabber import Grabber
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Set up the Settings and them use FeedGrabber.
-    settings = Settings( "config.json" )
-    feedGrabber = FeedGrabber( settings )
-    feedScraper = FeedScraper( settings, feedGrabber.xmls )
+    settings = Settings( Config )
+    grabber = Grabber( settings )
+    scraper = Scraper( settings, grabber.xmls )
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Print out the data.
-    print feedScraper.data
+    print "ITEMS:\n"
+    print scraper.items
+    print "DATA:\n"
+    print scraper.data
