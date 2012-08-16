@@ -17,12 +17,12 @@ class Scraper:
         self.items = {}
         self.data = {}
         for name, xml in self.xmls.iteritems():
-            self.items[ name ] = []
+            self.items[ name ] = {} 
             feedDict = setting.data[ "feeds" ][ name ]
             feedData = self.addExtraData( feedDict )
             self.data[ name ] = feedData
             for data in self.feedSanitise( feedData, xml, feedDict ):
-                self.items[ name ].append( data )
+                self.items[ name ][ data[ "title" ] ] = data
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Turn the xml into an easy to use python object.

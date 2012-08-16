@@ -17,8 +17,6 @@ class Grabber:
     def __init__( self, setting ):
         self.feeds = setting.data[ "feeds" ]
         self.setting = setting
-        # A dict of names -> feed names.
-        self.fileNames = {}
         # Make a dict of names -> xml
         self.xmls = {}
         self.reset()
@@ -27,36 +25,28 @@ class Grabber:
     # Main setting function. 
     def reset( self ):
         for name, data in self.feeds.items():
-            fileName = self.feedNamer( name )
-            self.fileNames[ name ] = fileName
-            path = self.feedOpener( self.setting, fileName, data )
+            path = self.feedOpener( self.setting, data )
             self.xmls[ name ] = self.feedReader( path )
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Open and save a file to disk.
-    def feedNamer( self, name ):
-        fileName = utils.slugify( name )
-        self.fileNames[ name ] = fileName
-        return fileName
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # Open and save a file to disk.
-    def feedOpener( self, settings, name, data ):
+    def feedOpener( self, settings, data ):
         rss = data[ "rss" ]
         # Use the fancy url opener.
         opener = urllib.FancyURLopener({})
         # Make sure the cache folder is there.
         cache = settings.data[ "cache" ]
-        newFolder = os.path.join( cache, name )
+        folderName = data[ "folder" ] 
+        newFolder = os.path.join( cache, folderName )
         if not os.path.exists( newFolder ):
             os.makedirs( newFolder )
         # Use a slug of the feed name for the new file to get saved.
-        feedPath = "%s.feed" % ( os.path.join( newFolder, name ), )
+        feedPath = "%s%sfeed.feed" % ( newFolder, os.sep, )
         try:
-            print 1/0
             # Save the rss into our new feedName.feed file.
             opener.retrieve( rss, feedPath )
         except:
-            print "Could not retrieve file %s." % ( name, )
+            print "Could not retrieve file %s." % ( rss, )
         return feedPath
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

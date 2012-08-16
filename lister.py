@@ -22,10 +22,9 @@ SkipPodcast = "skip"
 class Lister:
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Take the settings, feeds and filenames.
-    def __init__( self, setting, feeds, fileNames ):
+    def __init__( self, setting, items ):
         self.setting = setting
-        self.feeds = feeds
-        self.fileNames = fileNames
+        self.items = items 
         self.lists = {}
         self.writeOutLists()
         self.reset()
@@ -34,8 +33,9 @@ class Lister:
     # Main setting of the Lister data. 
     def reset( self ):
         cache = self.setting.data[ "cache" ]
-        for name, data in self.feeds.iteritems():
-            folder = os.path.join( cache, self.fileNames[ name ] )
+        for name, data in self.items.iteritems():
+            folderName = self.setting.data[ "feeds"][ name ][ "folder" ]
+            folder = os.path.join( cache, folderName )
             listFile = os.path.join( folder, ListFile )
             podcasts = self.getListFileLines( folder ) 
             feedList = self.feedIndexer( folder, name, data, podcasts )
@@ -45,9 +45,8 @@ class Lister:
     # List all of the feed entries and their state ( ignore, had, got, need ).
     def feedIndexer( self, folder, name, data, podcasts ):
         feedList = []
-        for item in self.feeds[ name ]:
-            print item
-            podcast = os.path.join( folder, item[ "fileName" ] )
+        for item, values in data.iteritems(): 
+            podcast = os.path.join( folder, values[ "fileName" ] )
             if utils.fileExists( podcast ):
                 status = "got"
             elif podcast in podcasts:
@@ -55,8 +54,11 @@ class Lister:
             else:
                 status = "need"
             feedList.append( {
+                "name" : name,
+                "title" : values[ "title" ],
                 "podcast" : podcast,
                 "status"  : status,
+                "fileName" : values[ "fileName" ],
             } )
         return feedList
 
@@ -76,19 +78,22 @@ class Lister:
     # Merge stored list with the current downloaded files.
     def writeOutLists( self ):
         root = self.setting.data[ "folder" ]
-        for name, data in self.feeds.iteritems():
-            folder = os.path.join( root, self.fileNames[ name ] )
+        cache = self.setting.data[ "cache" ]
+        for name, data in self.items.iteritems():
+            folderName = self.setting.data[ "feeds"][ name ][ "folder" ]
+            folder = os.path.join( root, folderName )
+            cacheFolder = os.path.join( cache, folderName )
             # If the folders not there, no need to update the file.
             if not os.path.exists( folder ):
                 continue
             listFile = os.path.join( folder, ListFile )
-            podcasts = self.getListFileLines( folder ) 
+            podcasts = self.getListFileLines( cacheFolder ) 
             numPodcasts = len( podcasts ) 
             for file in os.listdir( folder ):
                 if file not in podcasts:
                     podcasts.append( file )
             if len( podcasts ) > numPodcasts:
-                self.updateListFile( folder, podcasts ) 
+                self.updateListFile( cacheFolder, podcasts ) 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Test run.
@@ -103,7 +108,7 @@ if __name__ == "__main__":
     settings = Settings( Config )
     grabber = Grabber( settings )
     scraper = Scraper( settings, grabber.xmls )
-    lister = Lister( settings, scraper.items, grabber.fileNames )
+    lister = Lister( settings, scraper.items )
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Print out the data.
     for name, podcasts in lister.lists.iteritems():

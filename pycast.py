@@ -27,16 +27,16 @@ class PyCast:
         )
         self.lister = Lister( 
             self.setting, 
-            self.scraper.items, 
-            self.grabber.fileNames 
+            self.scraper.items
         )
         self.downloader = Downloader( 
-            self.lister.fileNames, 
-            self.lister.lists
+            self.setting,
+            self.lister.lists,
+            self.scraper.items
         )
 
-    def download( self ):
-        self.downloader.downloadAll()
+    def download( self, verbose = False, dryRun = False ):
+        self.downloader.downloadAll( verbose, dryRun )
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Main execution loop below.
@@ -45,5 +45,6 @@ if __name__ == "__main__":
     print pyCast.grabber.xmls
     print pyCast.scraper.data
     print pyCast.lister.lists
+    print pyCast.download( True, True )
     #pyCast.download()
 
