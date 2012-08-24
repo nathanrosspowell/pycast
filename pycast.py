@@ -16,9 +16,10 @@ from downloader import Downloader
 class PyCast:
     def __init__( self, configFile ):
         self.configFile = configFile
-        self.reset()
 
-    def reset( self ):
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # 
+    def fullReset( self ):
         self.setting = Settings( self.configFile )
         self.grabber = Grabber( self.setting )
         self.scraper = Scraper(
@@ -35,6 +36,8 @@ class PyCast:
             self.scraper.items
         )
 
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # 
     def download( self, verbose = False, dryRun = False ):
         self.downloader.downloadAll( verbose, dryRun )
 
@@ -42,9 +45,7 @@ class PyCast:
 # Main execution loop below.
 if __name__ == "__main__":
     pyCast = PyCast( Config )
-    print pyCast.grabber.xmls
-    print pyCast.scraper.data
-    print pyCast.lister.lists
-    print pyCast.download( True, True )
+    pyCast.fullReset()
+    pyCast.download( True, True )
     #pyCast.download()
 

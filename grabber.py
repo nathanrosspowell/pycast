@@ -6,6 +6,7 @@
 import xml.dom.minidom
 import urllib
 import os
+import logging
 # Local.
 import utils
 
@@ -46,7 +47,7 @@ class Grabber:
             # Save the rss into our new feedName.feed file.
             opener.retrieve( rss, feedPath )
         except:
-            print "Could not retrieve file %s." % ( rss, )
+            logging.warning( "Could not retrieve file %s." % ( rss, ) )
         return feedPath
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
